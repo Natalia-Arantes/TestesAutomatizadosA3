@@ -1,9 +1,11 @@
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.beans.Transient;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CalculoDeSalarioTest {
 
@@ -100,11 +102,62 @@ public class CalculoDeSalarioTest {
   @Test
   @DisplayName("Calcula o salário INVÁLIDO de um funcionário")
   public void calculaSalarioInválido() throws IllegalAccessException {
-    Funcionario funcionario = new Funcionario("Pablo", 1, 70);
+    Funcionario funcionario = new Funcionario("Daniel", 1, 70);
     IllegalAccessException illegalAccessException = assertThrows(IllegalAccessException.class, () ->
       funcionario.calcularPagamento());
 
     assertEquals("O pagamento não pode ser menor que R$ 1320,00" , illegalAccessException.getMessage());
   }
+
+  @Test
+  @DisplayName("Instanciar funcionário terceirizado com despesa válida")
+  public void despesaValidaParaTerceirizado() throws IllegalAccessException {
+    FuncionarioTerceirizado funcionario = new FuncionarioTerceirizado("Daniel", 1, 70, 900);
+    assertEquals(900 ,funcionario.getDespesasAdicionais());
+  }
+
+  @Test
+  @DisplayName("Instanciar funcionário terceirizado com despesa inválida")
+  public void despesaInvalidaParaTerceirizado() throws IllegalAccessException {
+
+    IllegalAccessException despesaInvalidaException = assertThrows(IllegalAccessException.class, () ->
+      new FuncionarioTerceirizado("Robson", 1, 70, 1001));
+
+    assertEquals("O valor das despesas adicionais não pode ultrapassar R$ 1000.00",
+      despesaInvalidaException.getMessage());
+  }
+
+  @Test
+  @DisplayName("Altera funcionário terceirizado com despesa válida")
+  public void alteraDespesaValidaParaTerceirizado() throws IllegalAccessException {
+    double despesaEsperada = 999;
+    FuncionarioTerceirizado funcionario = new FuncionarioTerceirizado("Richard", 1, 70, 800);
+
+    funcionario.setDespesasAdicionais(despesaEsperada);
+    assertEquals(despesaEsperada ,funcionario.getDespesasAdicionais());
+  }
+
+  @Test
+  @DisplayName("Instanciar funcionário terceirizado com despesa inválida")
+  public void alteraDespesaInvalidaParaTerceirizado() throws IllegalAccessException {
+    double despesaEsperada = 9000;
+    FuncionarioTerceirizado funcionario = new FuncionarioTerceirizado("Richard", 1, 70, 800);
+
+    IllegalAccessException despesaInvalidaException = assertThrows(IllegalAccessException.class, () ->
+      funcionario.setDespesasAdicionais(despesaEsperada));
+
+    assertEquals("O valor das despesas adicionais não pode ultrapassar R$ 1000.00",
+      despesaInvalidaException.getMessage());
+  }
+
+  @Test
+  @DisplayName("Calcula salário do terceirizado")
+  public void calculaSlarioTerceirizado() throws IllegalAccessException {
+    double salarioEsperado = (40 * 70) + (800 * 1.1);
+    FuncionarioTerceirizado funcionario = new FuncionarioTerceirizado("Richard", 40, 70, 800);
+    assertEquals(salarioEsperado, funcionario.calcularPagamento());
+
+  }
+
 
 }

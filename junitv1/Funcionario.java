@@ -64,4 +64,13 @@ public class Funcionario implements RegrasPagamento {
 
     return valorHora;
   }
+
+  @Override
+  public double validaDespesasAdicionais(double despesas) throws IllegalAccessException {
+    if(despesas > 1000){
+      throw new IllegalAccessException("O valor das despesas adicionais não pode ultrapassar R$ 1000.00");
+    }
+
+    return despesas;
+  }
 }
